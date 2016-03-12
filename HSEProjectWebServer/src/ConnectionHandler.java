@@ -6,6 +6,7 @@ import java.net.Socket;
 public class ConnectionHandler extends Thread{
 	
 	Socket s;
+	long pause;
 	
 	//for sending the output to client
 	PrintWriter pw;
@@ -14,15 +15,23 @@ public class ConnectionHandler extends Thread{
 	BufferedReader br;
 	
 	//constructor
-	public ConnectionHandler(Socket s) throws Exception{
+	public ConnectionHandler(Socket s, long pause) throws Exception{
 		this.s = s;
+		this.pause = pause;
 		br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		pw = new PrintWriter(s.getOutputStream());
 	}
 	
 	//thread class contains a method run which is call automatically when we start the thread
 	public void run() {
-		
+		try {
+//			long pause = Math.round(Math.random()*2000);
+            Thread.sleep(pause);
+            System.out.println("Simple Thread - pause="+pause);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			//here we get the request string and give this string to Request class
 			String reqS = "";

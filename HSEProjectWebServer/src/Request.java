@@ -3,6 +3,7 @@ public class Request {
 	
 	String filename;
 	String StringOfParameters;
+	String XMLString;
 	
 	//we have to create a constructor that accept a string
 	public Request (String request) {
@@ -13,8 +14,9 @@ public class Request {
 		filename = firstString[1];
 		
 		//searching the parameter of a XML string
-		if (lines.length == 12){
+		if (lines.length >= 12){
 			StringOfParameters = lines[11];
+			XMLString = request.substring(request.indexOf("<?xml version='1.0' encoding='utf-8'?>"));
 		}
 		else StringOfParameters = "";
 	}
