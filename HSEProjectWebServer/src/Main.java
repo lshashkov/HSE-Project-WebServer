@@ -18,12 +18,13 @@ public class Main{
 	}
 	
 	private void acceptRequests() throws Exception{
-		while (true) {
+		while (true) { //чтобы обработать все поступающие запросы от клиентов без исключения
 //			long timeStart = System.currentTimeMillis();
 			Socket s = serverSocket.accept();
 			ConnectionHandler ch = new ConnectionHandler(s, 0);
 			ch.start();
 			
+			//можно открыть еще побочный поток
 //			if (ch.isAlive())
 //			{
 //				Socket s2 = serverSocket.accept();

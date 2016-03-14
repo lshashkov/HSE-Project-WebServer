@@ -1,7 +1,4 @@
-import java.io.StringReader;
 import java.util.ArrayList;
-
-import javax.print.attribute.ResolutionSyntax;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -14,9 +11,9 @@ private String resultString;
 private String operation;
 private String subOperation = "";
 private String currentTag;
-private int resultExpression = 0;
+private double resultExpression = 0;
 private String newExpression;
-private ArrayList<Integer> resultsSubExpressions = new ArrayList<Integer>();
+private ArrayList<Double> resultsSubExpressions = new ArrayList<Double>();
  
 public TestSAXHandler(){
 	result = new StringBuffer();
@@ -80,47 +77,69 @@ public void characters(char[] ch, int start, int length)
 	if (currentTag == "Member" && subOperation.length() == 0 && value.length() != 0)
 	{
 		if(resultExpression == 0){
-			resultExpression = Integer.parseInt(value.trim());
+			if (operation.equals("sin")) {
+				resultExpression = Math.sin(Double.parseDouble(value.trim()));
+			}
+			else if (operation.equals("cos")) {
+				resultExpression = Math.cos(Double.parseDouble(value.trim()));
+			}
+			else if (operation.equals("sqrt")) {
+				if (Double.parseDouble(value.trim()) > 0) {
+					resultExpression = Math.sqrt(Double.parseDouble(value.trim()));
+				}
+			}
+			else
+				resultExpression = Double.parseDouble(value.trim());
 		}
 		else
 			//определим текущую операцию и выполним
 			if(operation.equals("+"))
 			{
-				resultExpression = resultExpression + Integer.parseInt(value.trim());
+				resultExpression = resultExpression + Double.parseDouble(value.trim());
 			}
 			else if (operation.equals("-")) {
-				resultExpression = resultExpression - Integer.parseInt(value.trim());
+				resultExpression = resultExpression - Double.parseDouble(value.trim());
 			}
 			else if (operation.equals("*")) {
-				resultExpression = resultExpression * Integer.parseInt(value.trim());
+				resultExpression = resultExpression * Double.parseDouble(value.trim());
 			}
 			else if (operation.equals("/")) {
-				resultExpression = resultExpression / Integer.parseInt(value.trim());
+				resultExpression = resultExpression / Double.parseDouble(value.trim());
 			}
-		resultString = Integer.toString(resultExpression);
+		resultString = Double.toString(resultExpression);
 		
 		currentTag = null;
 	}
 	else if (currentTag == "Member" && subOperation.length() != 0 && value.length() != 0)
 	{
 		if(resultsSubExpressions.get(resultsSubExpressions.size()-1) == null) {
-			resultsSubExpressions.set(resultsSubExpressions.size()-1, Integer.parseInt(value.trim()));
+			if (subOperation.equals("sin"))
+				resultsSubExpressions.set(resultsSubExpressions.size()-1, Math.sin(Double.parseDouble(value.trim())));
+			else if (subOperation.equals("cos"))
+				resultsSubExpressions.set(resultsSubExpressions.size()-1, Math.cos(Double.parseDouble(value.trim())));
+			else if (subOperation.equals("sqrt")) {
+				if (Double.parseDouble(value.trim()) > 0) {
+					resultsSubExpressions.set(resultsSubExpressions.size()-1, Math.sqrt(Double.parseDouble(value.trim())));
+				}
+			}
+			else
+				resultsSubExpressions.set(resultsSubExpressions.size()-1, Double.parseDouble(value.trim()));
 		}
 		else
 		{
 			//определим текущую операцию и выполним
 			if(subOperation.equals("+"))
 			{
-				resultsSubExpressions.set(resultsSubExpressions.size()-1, resultsSubExpressions.get(resultsSubExpressions.size()-1) + Integer.parseInt(value.trim()));
+				resultsSubExpressions.set(resultsSubExpressions.size()-1, resultsSubExpressions.get(resultsSubExpressions.size()-1) + Double.parseDouble(value.trim()));
 			}
 			else if (subOperation.equals("-")) {
-				resultsSubExpressions.set(resultsSubExpressions.size()-1, resultsSubExpressions.get(resultsSubExpressions.size()-1) - Integer.parseInt(value.trim()));
+				resultsSubExpressions.set(resultsSubExpressions.size()-1, resultsSubExpressions.get(resultsSubExpressions.size()-1) - Double.parseDouble(value.trim()));
 			}
 			else if (subOperation.equals("*")) {
-				resultsSubExpressions.set(resultsSubExpressions.size()-1, resultsSubExpressions.get(resultsSubExpressions.size()-1) * Integer.parseInt(value.trim()));
+				resultsSubExpressions.set(resultsSubExpressions.size()-1, resultsSubExpressions.get(resultsSubExpressions.size()-1) * Double.parseDouble(value.trim()));
 			}
 			else if (subOperation.equals("/")) {
-				resultsSubExpressions.set(resultsSubExpressions.size()-1, resultsSubExpressions.get(resultsSubExpressions.size()-1) / Integer.parseInt(value.trim()));
+				resultsSubExpressions.set(resultsSubExpressions.size()-1, resultsSubExpressions.get(resultsSubExpressions.size()-1) / Double.parseDouble(value.trim()));
 			}
 		currentTag = null;
 		}
@@ -140,7 +159,17 @@ public void endElement(String namespaceURI, String localName, String qName)
 			//посчитать результат перед закрытием
 			if(resultsSubExpressions.size() > 0)
 			{
-				resultExpression = resultsSubExpressions.get(0);
+				if (operation.equals("sin"))
+					resultExpression = Math.sin(resultsSubExpressions.get(0));
+				else if (operation.equals("cos"))
+					resultExpression = Math.cos(resultsSubExpressions.get(0));
+				else if (operation.equals("sqrt")) {
+					if (resultsSubExpressions.get(0) > 0) {
+						resultExpression = Math.sqrt(resultsSubExpressions.get(0));
+					}
+				}
+				else
+					resultExpression = resultsSubExpressions.get(0);
 				for (int i = 1; i < resultsSubExpressions.size(); i++)
 				{
 					if (resultsSubExpressions.get(i) != null)
@@ -159,7 +188,7 @@ public void endElement(String namespaceURI, String localName, String qName)
 						}
 					}
 				}
-				resultString = Integer.toString(resultExpression);
+				resultString = Double.toString(resultExpression);
 			}
 			if (resultString != null)
 				result.append("<div class=\"size\">Result of " + newExpression + ": " + resultString + "</div>");
